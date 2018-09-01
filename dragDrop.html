@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #f7f8e7;
+}
+#main {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-family: Avenir;
+  margin-top: 0;
+}
+.objects {
+    display:inline-block;
+    background-color: black;
+    color: white;
+    border: #DFBC6A 2px solid;
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    padding: 8px;
+    font-size: 18px;
+    text-align: center;
+    line-height: 100px;
+    box-shadow: 2px 2px 2px #999;
+    cursor: move;
+    transition: .6s;
+}
+.objects:hover {
+  background: red;
+  color: white;
+  border: 2px solid white;
+}
+#drop_zone {
+    background-color: white;
+    border: 1px black solid;
+    margin: 0 auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: 600px;
+    height: 300px;
+    padding: 8px;
+    font-size: 18px;
+}
+h1, h2 {
+  margin-top: 30px;
+}
+button {
+  height: 50px;
+  width: 190px;
+  background: white;
+  color: black;
+  font-size: 18px;
+  transition: 0.6s;
+  border: 2px solid black;
+  
+}
+button:hover {
+  background: black;
+  color: white;
+  border: 2px white solid;
+}
+</style>
+<script>
+function _(id){
+   return document.getElementById(id);
+}
+var droppedIn = false;
+function drag_start(event) {
+    _('app_status').innerHTML = "Dragging the "+event.target.getAttribute('id');
+    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.setData("text", event.target.getAttribute('id') );
+}
+function drag_enter(event) {
+    _('app_status').innerHTML = "You are dragging over the "+event.target.getAttribute('id');
+}
+function drag_leave(event) {
+    _('app_status').innerHTML = "You left the "+event.target.getAttribute('id');
+}
+function drag_drop(event) {
+    event.preventDefault(); /* Prevent undesirable default behavior while dropping */
+    var elem_id = event.dataTransfer.getData("text");
+    event.target.appendChild( _(elem_id) );
+    _('app_status').innerHTML = "Dropped "+elem_id+" into the "+event.target.getAttribute('id');
+    _(elem_id).removeAttribute("draggable");
+    _(elem_id).style.cursor = "default";
+    droppedIn = true;
+}
+function drag_end(event) {
+    if(droppedIn == false){
+        _('app_status').innerHTML = "You let the "+event.target.getAttribute('id')+" go.";
+    }
+	droppedIn = false;
+}
+function readDropZone(){
+    for(var i=0; i < _("drop_zone").children.length; i++){
+        alert(_("drop_zone").children[i].id+" is in the drop zone");
+    }
+    /* Run Ajax request to pass any data to your server */
+}
+</script>
+</head>
+<body>
+<div id="main">
+<h2 id="app_status">App status...</h2>
+<h1>Drop Zone</h1>
+<div id="drop_zone" ondragenter="drag_enter(event)" ondrop="drag_drop(event)" ondragover="return false" ondragleave="drag_leave(event)" ></div>
+<div id="object1" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">object 1</div>
+<div id="object2" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">object 2</div>
+<div id="object3" class="objects" draggable="true" ondragstart="drag_start(event)" ondragend="drag_end(event)">object 3</div>
+<hr>
+<button onclick="readDropZone()">Get Object Data</button>
+</div>
+</body>
+</html>
